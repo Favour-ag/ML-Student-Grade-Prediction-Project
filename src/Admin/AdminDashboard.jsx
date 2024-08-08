@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FaRegUserCircle, FaSpinner } from "react-icons/fa"; // Import FaSpinner
+import { FaRegUserCircle, FaSpinner } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import studentgraduate from "../assets/studentgraduate.svg";
