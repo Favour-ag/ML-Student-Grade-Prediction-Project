@@ -26,7 +26,6 @@ const DataEntryPage = () => {
     home_environment: "",
     actual_grade: "",
     cgpa: "",
-    student_name: "", // Add student name to the formData state
   });
 
   const [message, setMessage] = useState("");
@@ -124,9 +123,7 @@ const DataEntryPage = () => {
   return (
     <div className="min-h-screen flex flex-col md:flex-row items-center justify-center bg-gray-100 p-4">
       <div className="p-8 rounded-lg w-full max-w-2xl">
-        <h2 className="text-3xl font-bold mb-6 text-center">
-          Hello {formData.student_name || "Student"}
-        </h2>
+        <h2 className="text-3xl font-bold mb-6 text-center">Hello Student</h2>
         <p className="text-center mb-6">Please enter your details</p>
         {message && (
           <div className="mb-4 text-center text-red-500">{message}</div>
