@@ -15,8 +15,6 @@ const AdminDashboard = () => {
   const [chartData, setChartData] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [averagePredictedGrade, setAveragePredictedGrade] = useState(0);
-  const [averagePreviousGrade, setAveragePreviousGrade] = useState(0);
 
   // Function to map letter grades to numeric values
   const letterGradeToNumeric = (grade) => {
