@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FaRegUserCircle, FaSpinner } from "react-icons/fa";
+import { FaRegUserCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import studentgraduate from "../assets/studentgraduate.svg";
@@ -15,6 +15,8 @@ const AdminDashboard = () => {
   const [chartData, setChartData] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [averagePredictedGrade, setAveragePredictedGrade] = useState(0);
+  const [averagePreviousGrade, setAveragePreviousGrade] = useState(0);
 
   // Function to map letter grades to numeric values
   const letterGradeToNumeric = (grade) => {
@@ -138,6 +140,7 @@ const AdminDashboard = () => {
               }
             );
 
+            console.log(course);
             const { students = [] } = response.data;
             const formattedData = students.map((student) => ({
               course,
@@ -265,9 +268,7 @@ const AdminDashboard = () => {
       </div>
 
       {loading ? (
-        <div className="flex justify-center items-center h-64">
-          <FaSpinner className="animate-spin text-4xl text-blue-500" />
-        </div>
+        <div className="text-center">Loading...</div>
       ) : (
         <div className="">
           <Chart data={chartData} />
