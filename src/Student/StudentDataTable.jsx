@@ -87,8 +87,8 @@ const CourseTable = () => {
       )}
       {!isLoading && !error && !errorData && (
         <table className="min-w-full bg-white">
-          <thead>
-            <tr>
+          <thead className="text-left">
+            <tr className="text-left">
               <th className="py-2 px-4 border-b">Course Name</th>
               <th className="py-2 px-4 border-b">Course ID</th>
               <th className="py-2 px-4 border-b">Prior Knowledge</th>

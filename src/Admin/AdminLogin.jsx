@@ -31,7 +31,7 @@ function AdminLogin() {
         setSuccessMessage("Login successful!");
         setTimeout(() => {
           navigate("/admin/dashboard");
-        }, 3000); // Redirect to dashboard after 3 seconds
+        }, 1000); // Redirect to dashboard after 3 seconds
       } else {
         setErrorMessage("Login failed. Try again.");
       }

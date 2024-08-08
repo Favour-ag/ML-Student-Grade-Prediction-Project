@@ -57,7 +57,7 @@ function AdminRegister() {
       setSuccessMessage("Registration successful!");
       setTimeout(() => {
         navigate("/admin/dashboard");
-      }, 3000); // Redirect to dashboard after 3 seconds
+      }, 1000); // Redirect to dashboard after 3 seconds
     } catch (error) {
       if (
         error.response &&
