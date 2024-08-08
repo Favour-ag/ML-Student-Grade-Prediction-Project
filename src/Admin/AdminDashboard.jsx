@@ -279,8 +279,10 @@ const AdminDashboard = () => {
         </div>
       )}
 
-      <div className="border p-4 rounded shadow-lg mt-4 font-semibold text-3xl">
-        <h2 className="text-center mb-4">Student Data</h2>
+      <div className="border p-4 rounded shadow-lg mt-4 ">
+        <h2 className="text-center mb-4 font-semibold text-3xl">
+          Student Data
+        </h2>
         <StudentList />
       </div>
       <Modal />
