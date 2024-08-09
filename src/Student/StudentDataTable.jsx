@@ -136,7 +136,7 @@ const CourseTable = () => {
                       className="bg-blue-500 text-white px-3 py-2 sm:px-4 sm:py-2 rounded"
                       onClick={() => handlePrediction(course.course_name)}
                     >
-                      Get Prediction
+                      Get Analysis
                     </button>
                   </td>
                 </tr>
