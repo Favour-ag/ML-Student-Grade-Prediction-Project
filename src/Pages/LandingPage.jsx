@@ -7,7 +7,7 @@ const LandingPage = () => {
       <h1 className="text-4xl font-bold mb-8 text-blue-600">
         Welcome to Elaebi Amaremo’s Student Analysis Dashboard
       </h1>
-      <p className="text-2xl">(239195092)</p>
+      <p className="text-3xl mb-4 ">(239195092)</p>
       <div className="bg-white shadow-md rounded-lg p-8 mb-8 w-full max-w-md">
         <h2 className="text-2xl font-semibold mb-4 text-gray-700">Student</h2>
         <div className="flex justify-around">
