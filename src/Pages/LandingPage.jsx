@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 const LandingPage = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
-      <h1 className="text-4xl font-bold mb-4 text-blue-600">
+      <h1 className="text-4xl font-bold mb-4 text-blue-600 text-center">
         Welcome to Elaebi Amaremo’s Student Analysis Dashboard
       </h1>
       <p className="text-3xl mb-4 ">(239195092)</p>
