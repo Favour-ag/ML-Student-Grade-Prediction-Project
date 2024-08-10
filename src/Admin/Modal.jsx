@@ -21,7 +21,7 @@ const Modal = ({ isOpen, onClose, student }) => {
         }
 
         const response = await axios.get(
-          "https://amaremoelaebi.pythonanywhere.com/api/admin/students/predictions",
+          `https://amaremoelaebi.pythonanywhere.com/api/admin/students/predictions`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -43,7 +43,7 @@ const Modal = ({ isOpen, onClose, student }) => {
         setStudentData(filteredData);
       } catch (error) {
         console.error("Error fetching predictions:", error);
-        setError(error.message);
+        setError("Failed to load student predictions. Please try again later.");
       } finally {
         setLoading(false);
       }
@@ -52,20 +52,19 @@ const Modal = ({ isOpen, onClose, student }) => {
     fetchPredictions();
   }, [navigate, student]);
 
-  const getRiskStatus = (studentData) => {
+  const getRiskStatus = () => {
     if (studentData.length === 0) return "No data available";
 
-    const riskStatuses = studentData.map((data) => {
-      return Object.values(data.predicted_grades).some((grades) =>
-        grades.some((grade) => grade.risk_factor === "At risk")
-      );
-    });
-
-    // If any risk status is true, return "At risk". Otherwise, return "Not at risk".
-    return riskStatuses.some((status) => status) ? "At risk" : "Not at risk";
+    return studentData.some(({ predicted_grades }) =>
+      Object.values(predicted_grades).some((grades) =>
+        grades.some(({ risk_factor }) => risk_factor === "At risk")
+      )
+    )
+      ? "At risk"
+      : "Not at risk";
   };
 
-  const riskStatus = getRiskStatus(studentData);
+  const riskStatus = getRiskStatus();
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4 sm:p-6 md:p-8">
@@ -109,48 +108,56 @@ const Modal = ({ isOpen, onClose, student }) => {
           </span>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full table-auto">
-            <thead>
-              <tr className="bg-[#EAF1EF] text-left">
-                <th className="px-2 sm:px-4 py-2 border">Student Name</th>
-                <th className="px-2 sm:px-4 py-2 border">Previous Grades</th>
-                <th className="px-2 sm:px-4 py-2 border">Predicted Grades</th>
-              </tr>
-            </thead>
-            <tbody>
-              {studentData.map((student, index) => (
-                <tr key={index}>
-                  <td className="border px-2 sm:px-4 py-2">
-                    {student.student_name}
-                  </td>
-                  <td className="border px-2 sm:px-4 py-2">
-                    {Object.entries(student.previous_grades).map(
-                      ([subject, grade]) => (
-                        <div key={subject}>
-                          {subject}: {grade}
-                        </div>
-                      )
-                    )}
-                  </td>
-                  <td className="border px-2 sm:px-4 py-2">
-                    {Object.entries(student.predicted_grades).map(
-                      ([subject, grades]) => (
-                        <div key={subject}>
-                          {subject}:{" "}
-                          {grades.map((grade, index) => (
-                            <div key={index}>
-                              {grade.predicted_grade} (Risk: {grade.risk_factor}
-                              )
-                            </div>
-                          ))}
-                        </div>
-                      )
-                    )}
-                  </td>
+          {loading ? (
+            <p>Loading...</p>
+          ) : error ? (
+            <p className="text-red-500">{error}</p>
+          ) : studentData.length > 0 ? (
+            <table className="w-full table-auto">
+              <thead>
+                <tr className="bg-[#EAF1EF] text-left">
+                  <th className="px-2 sm:px-4 py-2 border">Student Name</th>
+                  <th className="px-2 sm:px-4 py-2 border">Previous Grades</th>
+                  <th className="px-2 sm:px-4 py-2 border">Predicted Grades</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {studentData.map((data, index) => (
+                  <tr key={index}>
+                    <td className="border px-2 sm:px-4 py-2">
+                      {data.student_name}
+                    </td>
+                    <td className="border px-2 sm:px-4 py-2">
+                      {Object.entries(data.previous_grades).map(
+                        ([subject, grade]) => (
+                          <div key={subject}>
+                            {subject}: {grade}
+                          </div>
+                        )
+                      )}
+                    </td>
+                    <td className="border px-2 sm:px-4 py-2">
+                      {Object.entries(data.predicted_grades).map(
+                        ([subject, grades]) => (
+                          <div key={subject}>
+                            {subject}:{" "}
+                            {grades.map((grade, idx) => (
+                              <div key={idx}>
+                                {grade.predicted_grade} (Risk:{" "}
+                                {grade.risk_factor})
+                              </div>
+                            ))}
+                          </div>
+                        )
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p>No predictions available for this student.</p>
+          )}
         </div>
       </div>
     </div>

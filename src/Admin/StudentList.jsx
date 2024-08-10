@@ -22,7 +22,7 @@ const StudentList = () => {
         }
 
         const response = await axios.get(
-          "https://amaremoelaebi.pythonanywhere.com//api/admin/students",
+          "https://amaremoelaebi.pythonanywhere.com/api/admin/students",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -30,13 +30,15 @@ const StudentList = () => {
           }
         );
 
+        // Map response data into studentData state
         const students = response.data.map((student, index) => ({
           id: index + 1,
           first_name: student.first_name,
           last_name: student.last_name,
           username: student.username,
           email: student.email,
-          gender: student.gender,
+          // gender is not included in the response according to the doc you shared
+          gender: "N/A", // Assign a default value or remove this field
         }));
 
         setStudentData(students);

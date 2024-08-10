@@ -73,7 +73,8 @@ const AdminDashboard = () => {
   };
 
   useEffect(() => {
-    const fetchCoursesAndStudents = async () => {
+    const fetchCoursePredictions = async () => {
+      setLoading(true);
       try {
         const token = localStorage.getItem("token");
         if (!token) {
@@ -82,8 +83,9 @@ const AdminDashboard = () => {
           return;
         }
 
+        // Fetch all predictions
         const response = await axios.get(
-          "https://amaremoelaebi.pythonanywhere.com/api/admin/courses-and-students",
+          "https://amaremoelaebi.pythonanywhere.com/api/admin/students/predictions",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -91,33 +93,45 @@ const AdminDashboard = () => {
           }
         );
 
-        const { courses, total_students } = response.data;
-        setCourses(courses);
-        setTotalStudents(total_students);
+        // Process the data
+        const studentsData = response.data; // Adjust based on actual API response
+        let courseData = [];
 
-        // Store data in localStorage
-        localStorage.setItem("courses", JSON.stringify(courses));
-        localStorage.setItem("total_students", total_students);
+        Object.keys(studentsData).forEach((studentKey) => {
+          const student = studentsData[studentKey];
+
+          Object.keys(student.predicted_grades).forEach((course) => {
+            const predictedData = student.predicted_grades[course][0];
+            const actualGrade = student.actual_grades[course];
+
+            if (selectedCourse === "All" || course === selectedCourse) {
+              courseData.push({
+                course: course,
+                PredictedGrade: letterGradeToNumeric(
+                  predictedGradeToLetter(predictedData.linear_regression_pred)
+                ),
+                previousGrade: letterGradeToNumeric(actualGrade),
+              });
+            }
+          });
+        });
+
+        setChartData(courseData);
+        calculateAverages(courseData);
       } catch (error) {
-        console.error("Error fetching courses and students:", error);
+        console.error("Error fetching course predictions:", error);
         setError(error.message);
         setTimeout(() => {
           setError(null);
         }, 1000); // Clear error after 1 second
       }
+      setLoading(false);
     };
 
-    // Check if data exists in localStorage
-    const storedCourses = localStorage.getItem("courses");
-    const storedTotalStudents = localStorage.getItem("total_students");
-
-    if (storedCourses && storedTotalStudents) {
-      setCourses(JSON.parse(storedCourses));
-      setTotalStudents(Number(storedTotalStudents));
-    } else {
-      fetchCoursesAndStudents();
+    if (courses.length > 0) {
+      fetchCoursePredictions();
     }
-  }, [navigate]);
+  }, [selectedCourse, courses, navigate]);
 
   useEffect(() => {
     const fetchCoursePredictions = async () => {
