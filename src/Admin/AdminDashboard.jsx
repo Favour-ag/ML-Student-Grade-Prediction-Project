@@ -130,10 +130,10 @@ const AdminDashboard = () => {
           return;
         }
 
-        if (selectedCourse === "All") {
-          let allCourseData = [];
+        let courseData = [];
 
-          for (const course of courses) {
+        if (selectedCourse === "All") {
+          const allCourseDataPromises = courses.map(async (course) => {
             const response = await axios.get(
               `https://amaremoelaebi.pythonanywhere.com/api/admin/course-data/${course}`,
               {
@@ -143,9 +143,8 @@ const AdminDashboard = () => {
               }
             );
 
-            console.log(course);
             const { students = [] } = response.data;
-            const formattedData = students.map((student) => ({
+            return students.map((student) => ({
               course,
               PredictedGrade: letterGradeToNumeric(
                 predictedGradeToLetter(
@@ -156,12 +155,9 @@ const AdminDashboard = () => {
                 student.student_data.actual_grade
               ),
             }));
+          });
 
-            allCourseData = [...allCourseData, ...formattedData];
-          }
-
-          setChartData(allCourseData);
-          calculateAverages(allCourseData);
+          courseData = (await Promise.all(allCourseDataPromises)).flat();
         } else {
           const response = await axios.get(
             `https://amaremoelaebi.pythonanywhere.com/api/admin/course-data/${selectedCourse}`,
@@ -173,8 +169,7 @@ const AdminDashboard = () => {
           );
 
           const { students = [] } = response.data;
-
-          const formattedData = students.map((student) => ({
+          courseData = students.map((student) => ({
             course: selectedCourse,
             PredictedGrade: letterGradeToNumeric(
               predictedGradeToLetter(
@@ -185,10 +180,10 @@ const AdminDashboard = () => {
               student.student_data.actual_grade
             ),
           }));
-
-          setChartData(formattedData);
-          calculateAverages(formattedData);
         }
+
+        setChartData(courseData);
+        calculateAverages(courseData);
       } catch (error) {
         console.error("Error fetching course predictions:", error);
         setError(error.message);
@@ -199,9 +194,7 @@ const AdminDashboard = () => {
       setLoading(false);
     };
 
-    if (selectedCourse === "All" && courses.length > 0) {
-      fetchCoursePredictions();
-    } else if (selectedCourse !== "All") {
+    if (courses.length > 0) {
       fetchCoursePredictions();
     }
   }, [selectedCourse, courses, navigate]);
