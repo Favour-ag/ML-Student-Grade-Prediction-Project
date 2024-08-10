@@ -18,7 +18,6 @@ const AdminDashboard = () => {
   const [averagePredictedGrade, setAveragePredictedGrade] = useState(0);
   const [averagePreviousGrade, setAveragePreviousGrade] = useState(0);
 
-  // Function to map letter grades to numeric values
   const letterGradeToNumeric = (grade) => {
     switch (grade) {
       case "A":
@@ -36,7 +35,6 @@ const AdminDashboard = () => {
     }
   };
 
-  // Function to map predicted values to letter grades
   const predictedGradeToLetter = (predictedValue) => {
     if (predictedValue >= 4) {
       return "A";
@@ -51,7 +49,6 @@ const AdminDashboard = () => {
     }
   };
 
-  // Function to calculate averages
   const calculateAverages = (data) => {
     if (data.length === 0) {
       setAveragePredictedGrade(0);
@@ -95,7 +92,6 @@ const AdminDashboard = () => {
         setCourses(courses);
         setTotalStudents(total_students);
 
-        // Store data in localStorage
         localStorage.setItem("courses", JSON.stringify(courses));
         localStorage.setItem("total_students", total_students);
       } catch (error) {
@@ -103,11 +99,10 @@ const AdminDashboard = () => {
         setError(error.message);
         setTimeout(() => {
           setError(null);
-        }, 1000); // Clear error after 1 second
+        }, 1000);
       }
     };
 
-    // Check if data exists in localStorage
     const storedCourses = localStorage.getItem("courses");
     const storedTotalStudents = localStorage.getItem("total_students");
 
@@ -131,9 +126,7 @@ const AdminDashboard = () => {
         }
 
         if (selectedCourse === "All") {
-          let allCourseData = [];
-
-          for (const course of courses) {
+          const allCourseDataPromises = courses.map(async (course) => {
             const response = await axios.get(
               `https://amaremoelaebi.pythonanywhere.com/api/admin/course-data/${course}`,
               {
@@ -143,9 +136,8 @@ const AdminDashboard = () => {
               }
             );
 
-            console.log(course);
             const { students = [] } = response.data;
-            const formattedData = students.map((student) => ({
+            return students.map((student) => ({
               course,
               PredictedGrade: letterGradeToNumeric(
                 predictedGradeToLetter(
@@ -156,10 +148,11 @@ const AdminDashboard = () => {
                 student.student_data.actual_grade
               ),
             }));
+          });
 
-            allCourseData = [...allCourseData, ...formattedData];
-          }
-
+          const allCourseData = (
+            await Promise.all(allCourseDataPromises)
+          ).flat();
           setChartData(allCourseData);
           calculateAverages(allCourseData);
         } else {
@@ -173,7 +166,6 @@ const AdminDashboard = () => {
           );
 
           const { students = [] } = response.data;
-
           const formattedData = students.map((student) => ({
             course: selectedCourse,
             PredictedGrade: letterGradeToNumeric(
@@ -194,14 +186,12 @@ const AdminDashboard = () => {
         setError(error.message);
         setTimeout(() => {
           setError(null);
-        }, 1000); // Clear error after 1 second
+        }, 1000);
       }
       setLoading(false);
     };
 
-    if (selectedCourse === "All" && courses.length > 0) {
-      fetchCoursePredictions();
-    } else if (selectedCourse !== "All") {
+    if (selectedCourse && courses.length > 0) {
       fetchCoursePredictions();
     }
   }, [selectedCourse, courses, navigate]);
