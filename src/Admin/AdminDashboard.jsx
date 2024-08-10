@@ -101,6 +101,9 @@ const AdminDashboard = () => {
       } catch (error) {
         console.error("Error fetching courses and students:", error);
         setError(error.message);
+        setTimeout(() => {
+          setError(null);
+        }, 1000); // Clear error after 1 second
       }
     };
 
@@ -189,6 +192,9 @@ const AdminDashboard = () => {
       } catch (error) {
         console.error("Error fetching course predictions:", error);
         setError(error.message);
+        setTimeout(() => {
+          setError(null);
+        }, 1000); // Clear error after 1 second
       }
       setLoading(false);
     };
@@ -271,20 +277,14 @@ const AdminDashboard = () => {
 
       {loading ? (
         <div className="flex justify-center items-center h-64">
-          <FaSpinner className="animate-spin text-4xl text-gray-500" />
+          <FaSpinner className="animate-spin" size={50} />
         </div>
       ) : (
-        <div className="">
-          <Chart data={chartData} />
-        </div>
+        <Chart data={chartData} />
       )}
 
-      <div className="border p-4 rounded shadow-lg mt-4 ">
-        <h2 className="text-center mb-4 font-semibold text-3xl">
-          Student Data
-        </h2>
-        <StudentList />
-      </div>
+      <StudentList course={selectedCourse} />
+
       <Modal />
     </div>
   );
